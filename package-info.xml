@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE package-info SYSTEM "http://www.elkarte.net/site/package-info">
+<package-info xmlns="http://www.elkarte.net/site/package-info" xmlns:elk="http://www.elkarte.net/">
+	<name>Pages</name>
+	<id>ant59:pages</id>
+	<type>addon</type>
+	<version>1.0.0</version>
+
+	<install for="1.0 - 1.0.99">
+		<readme type="file" parsebbc="true">readme.txt</readme>
+		<license type="inline">This Elkarte addon is released under a BSD-3-Clause license.</license>
+		<require-file name="Pages.controller.php" destination="CONTROLLERDIR" />
+		<require-file name="Pages.integration.php" destination="SOURCEDIR" />
+		<hook hook="integrate_actions" file="SOURCEDIR/Pages.integration.php" function="ia_pages" />
+	</install>
+
+	<uninstall for="1.0 - 1.0.99">
+		<hook reverse="true" hook="integrate_actions" file="SOURCEDIR/Pages.integration.php" function="ia_pages" />
+		<remove-file name="CONTROLLERDIR/Pages.controller.php" />
+		<remove-file name="SOURCEDIR/Pages.integration.php" />
+	</uninstall>
+
+</package-info>
