@@ -43,8 +43,8 @@ class Pages_Controller extends Action_Controller
 		$settings['custom_default_theme_url'] = str_replace('/themes/', '/custom/themes/', $settings['default_theme_url']);
 		$settings['custom_theme_dir'] = str_replace('/themes/', '/custom/themes/', $settings['theme_dir']);
 		$settings['custom_theme_url'] = str_replace('/themes/', '/custom/themes/', $settings['theme_url']);
-		$settings['custom_base_theme_dir'] = str_replace('/themes/', '/custom/themes/', $settings['base_theme_dir']);
-		$settings['custom_base_theme_url'] = str_replace('/themes/', '/custom/themes/', $settings['base_theme_url']);
+		$settings['custom_base_theme_dir'] = isset($settings['base_theme_dir']) ? str_replace('/themes/', '/custom/themes/', $settings['base_theme_dir']) : NULL;
+		$settings['custom_base_theme_url'] = isset($settings['base_theme_url']) ? str_replace('/themes/', '/custom/themes/', $settings['base_theme_url']) : NULL;
 	}
 
 	/*
@@ -88,7 +88,10 @@ class Pages_Controller extends Action_Controller
 			call_integration_hook('integrate_action_boardindex_after');
 		}
 
-		call_integration_hook('integrate_action_' . $hook . '_after', array($this->_function_name));
+		if (isset($hook))
+		{
+			call_integration_hook('integrate_action_' . $hook . '_after', array($this->_function_name));
+		}
 	}
 }
 
