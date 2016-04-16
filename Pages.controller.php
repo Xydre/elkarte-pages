@@ -54,29 +54,40 @@ class Pages_Controller extends Action_Controller
 	{
 		// Get and decode list of pages
 		$pages = json_decode(file_get_contents(BOARDDIR . '/custom/pages.json'), true);
-		$pa = $_GET['pa'];
 
-		$this->_file_name = $pages[$pa][0];
-		$this->_controller_name = $pages[$pa][1];
-		$this->_function_name = $pages[$pa][2];
-
-		// Include file and create controller instance
-		require_once(BOARDDIR . '/custom/sources/controllers/'.$this->_file_name);
-		$page_controller = new $this->_controller_name();
-
-		// Pre-dispatch (load templates and stuff)
-		if (method_exists($page_controller, 'pre_dispatch'))
-			$page_controller->pre_dispatch();
-
-		// Attempt to dispatch page action call
-		if (method_exists($page_controller, $this->_function_name))
-			$page_controller->{$this->_function_name}();
-		elseif (method_exists($page_controller, 'action_index'))
-			$page_controller->action_index();
-		// Fall back
-		elseif (function_exists($this->_function_name))
+		if (isset($_GET['pa']))
 		{
-			call_user_func($this->_function_name);
+			$pa = $_GET['pa'];
+
+			$this->_file_name = isset($pages[$pa][0]) ? $pages[$pa][0] : NULL;
+			$this->_controller_name = isset($pages[$pa][1]) ? $pages[$pa][1] : NULL;
+			$this->_function_name = isset($pages[$pa][2]) ? $pages[$pa][2] : NULL;
+		}
+		else
+		{
+			$this->_file_name = NULL;
+		}
+
+		if (!empty($this->_file_name) && file_exists(BOARDDIR . '/custom/sources/controllers/'.$this->_file_name))
+		{
+			// Include file and create controller instance
+			require_once(BOARDDIR . '/custom/sources/controllers/'.$this->_file_name);
+			$page_controller = new $this->_controller_name();
+
+			// Pre-dispatch (load templates and stuff)
+			if (method_exists($page_controller, 'pre_dispatch'))
+				$page_controller->pre_dispatch();
+
+			// Attempt to dispatch page action call
+			if (method_exists($page_controller, $this->_function_name))
+				$page_controller->{$this->_function_name}();
+			elseif (method_exists($page_controller, 'action_index'))
+				$page_controller->action_index();
+			// Fall back
+			elseif (function_exists($this->_function_name))
+			{
+				call_user_func($this->_function_name);
+			}
 		}
 		else
 		{
